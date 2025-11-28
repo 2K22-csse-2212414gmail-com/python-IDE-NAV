@@ -1,0 +1,47 @@
+body {
+  font-family: monospace;
+  background-color: black;
+  color: white;
+  padding: 20px;
+}
+
+.split {
+  display: flex;
+  gap: 20px;
+  height: 100vh;
+}
+
+.leftDiv, .rightDiv {
+  flex: 1;
+  padding: 20px;
+  overflow-y: auto;
+}
+
+.leftDiv {
+  background-color: #111;
+}
+
+.rightDiv {
+  background-color: #1e1e1e;
+}
+
+button {
+  padding: 10px 20px;
+  margin: 10px 5px 10px 0;
+  cursor: pointer;
+}
+
+.dark-mode {
+  background-color: black;
+  color: white;
+}
+textarea {
+  width: 100%;
+  height: 300px;
+  background-color: #1e1e1e;
+  color: white;
+  border: none;
+  padding: 10px;
+  font-size: 16px;
+  resize: vertical;
+}

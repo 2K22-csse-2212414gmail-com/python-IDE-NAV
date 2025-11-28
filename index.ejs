@@ -1,0 +1,238 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<style>
+body {
+  font-family: monospace;
+  background-color: black;
+  color: white;
+  padding: 25px;
+}
+
+.split {
+  display: flex;
+  gap: 20px;
+  height: 100vh;
+}
+
+.leftDiv, .rightDiv {
+  flex: 1;
+  padding: 20px;
+  overflow-y: auto;
+}
+
+.leftDiv {
+  background-color: #111;
+}
+
+.rightDiv {
+  background-color: #1e1e1e;
+}
+
+textarea {
+  width: 100%;
+  height: 300px;
+  background-color: #1e1e1e;
+  color: white;
+  border: none;
+  padding: 10px;
+  font-size: 16px;
+  resize: vertical;
+}
+
+.dark-mode {
+  background-color: black;
+  color: white;
+}
+
+button {
+  padding: 10px 20px;
+  margin-top: 10px;
+  cursor: pointer;
+}
+</style>
+</head>
+<body>
+
+<button onclick="toggleDarkMode()">Toggle Dark Mode</button>
+
+<div class="split">
+  <div class="leftDiv">
+    <h2>Candies</h2>
+    <p>
+      Alice is a kindergarten teacher. She wants to give some candies to the children in her class.  All the children sit in a line and each of them has a rating score according to his or her performance in the class.  Alice wants to give at least 1 candy to each child. If two children sit next to each other, then the one with the higher rating must get more candies. Alice wants to minimize the total number of candies she must buy.
+<br>
+Example
+
+
+She gives the students candy in the following minimal amounts: . She must buy a minimum of 10 candies.
+
+Function Description
+
+Complete the candies function in the editor below.
+
+candies has the following parameter(s):
+
+int n: the number of children in the class
+int arr[n]: the ratings of each student
+    </br>
+Returns
+
+int: the minimum number of candies Alice must buy
+Input Format
+
+The first line contains an integer, , the size of .
+Each of the next  lines contains an integer  indicating the rating of the student at position .
+
+Constraints
+
+Sample Input 0
+
+3
+1
+2
+2
+Sample Output 0
+
+4
+Explanation 0
+
+Here 1, 2, 2 is the rating. Note that when two children have equal rating, they are allowed to have different number of candies. Hence optimal distribution will be 1, 2, 1.
+
+Sample Input 1
+
+10
+2
+4
+2
+6
+1
+7
+8
+9
+2
+1
+Sample Output 1
+
+19
+Explanation 1
+
+Optimal distribution will be 
+
+Sample Input 2
+
+8
+2
+4
+3
+5
+2
+6
+4
+5
+Sample Output 2
+
+12
+Explanation 2
+
+Optimal distribution will be .
+</p>
+  </div>
+
+  <div class="rightDiv">
+    <h2>Write your notes</h2>
+    <textarea id="code-editor" placeholder="Write your Python daily challenge notes here..."></textarea>
+    
+
+    
+  </div>
+</div>
+<script src="https://cdn.jsdelivr.net/npm/monaco-editor@0.41.0/min/vs/loader.js"></script>
+
+  <div id="editor" style="width:800px;height:400px;border:1px solid #ccc;margin-top:10px;"></div>
+<script>
+require.config({ paths: { 'vs': 'https://cdn.jsdelivr.net/npm/monaco-editor@0.41.0/min/vs' }});
+
+require(['vs/editor/editor.main'], function () {
+    window.editor = monaco.editor.create(document.getElementById('editor'), {
+        value: "# Write Python code here\nprint('Hello World')",
+        language: 'python',    // change to 'javascript', 'cpp', etc.
+        theme: 'vs-dark',
+        automaticLayout: true
+    });
+});
+
+function toggleDarkMode() {
+   document.body.classList.toggle("dark-mode");
+}
+
+const getEditorCode = () => (window.editor && typeof window.editor.getValue === 'function') ? window.editor.getValue() : document.getElementById("code-editor").value;
+
+const code = getEditorCode();
+console.log(code);
+
+async function runCode() {
+    const code = getEditorCode();
+
+    const res = await fetch("http://localhost:8000/run", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ code: code, input: "" })
+    });
+
+    const data = await res.json();
+    console.log(data.output);
+}
+
+
+// Connect buttons to backend
+document.getElementById("run-code-btn").addEventListener("click", async () => {
+    const code = getEditorCode();
+    const res = await fetch("http://127.0.0.1:8000/run", {
+        method: "POST",
+        headers: {"Content-Type": "application/json"},
+        body: JSON.stringify({ code })
+    });
+    const data = await res.json();
+    document.getElementById("output-console").textContent = data.output;
+});
+
+document.getElementById("evaluate-code-btn").addEventListener("click", async () => {
+    const code = getEditorCode();
+    const res = await fetch("http://127.0.0.1:8000/evaluate", {
+        method: "POST",
+        headers: {"Content-Type": "application/json"},
+        body: JSON.stringify({ code, problem_id: 1 })
+    });
+    const data = await res.json();
+    document.getElementById("output-console").textContent = `${data.verdict}\n${data.passed} test cases passed`;
+});
+  
+
+
+
+  // Run Button Function
+async function runCode() {
+    const code = editor.getValue();  // get code from editor
+
+    try {
+        const res = await fetch("http://localhost:8000/run", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ code: code, input: "" })  // input can be empty
+        });
+
+        const data = await res.json();
+        document.getElementById("output").innerText = data.output || data.error;
+    } catch (err) {
+        document.getElementById("output").innerText = "Error connecting to backend!";
+        console.error(err);
+    }}
+</script>
+<button onclick="runCode()">Run Code</button>
+
+<h3>Output:</h3>
+<pre id="output"></pre>
+</body>
+</html>
